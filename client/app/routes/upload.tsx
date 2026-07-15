@@ -17,36 +17,28 @@ const Upload = () => {
     multiple: false,
   });
 
-  const handleAnalyze = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!file) {
-      setStatusText("Please upload a PDF file first.");
-      return;
-    }
 
-    setIsProcessing(true);
-    setStatusText("Analyzing your resume...");
+    if (!file) return;
 
     const formData = new FormData(e.currentTarget);
     formData.append("resume", file);
 
     try {
-      const res = await fetch("https://localhost:3333/api/analyze", {
+      const res = await fetch("http://localhost:3333/api/analyze", {
         method: "POST",
         body: formData,
       });
-
       const data = await res.json();
-
       if (res.ok) {
-        setStatusText("Success! Resume ID: " + data.resumeId);
         console.log("Saved to SQLite!", data);
+        console.log("Resume ID:", data.resumeId);
       } else {
-        setStatusText("Error: " + data.error);
+        console.error("Error: " + data.error);
       }
     } catch (error) {
       console.error(error);
-      setStatusText("Failed to connecto to backend");
     } finally {
       setIsProcessing(false);
     }
@@ -66,14 +58,13 @@ const Upload = () => {
             <p className="text-lg font-semibold animate-pulse">{statusText}</p>
           </div>
         ) : (
-          <form onSubmit={handleAnalyze} className="flex flex-col gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             <div className="flex flex-col gap-2">
               <Label htmlFor="companyName">Company Name</Label>
               <Input
                 id="companyName"
                 name="companyName"
                 placeholder="e.g. Google"
-                required
               />
             </div>
 
@@ -83,7 +74,6 @@ const Upload = () => {
                 id="jobTitle"
                 name="jobTitle"
                 placeholder="e.g. Frontend Developer"
-                required
               />
             </div>
 
@@ -94,7 +84,6 @@ const Upload = () => {
                 name="jobDescription"
                 placeholder="Paste the full job description here..."
                 rows={10}
-                required
               />
             </div>
 
@@ -102,7 +91,7 @@ const Upload = () => {
               <Label>Upload Resume (PDF)</Label>
               <div
                 {...getRootProps()}
-                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors bg-input/30 ${
                   isDragActive
                     ? "border-blue-500 bg-blue-50"
                     : "border-input hover:border-ring hover:border-ring-3"
@@ -112,7 +101,7 @@ const Upload = () => {
                 {file ? (
                   <p className="font-semibold">{file.name}</p>
                 ) : (
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground ">
                     Drag & drop your PDF here, or click to select
                   </p>
                 )}
