@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
 
 const Upload = () => {
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState("");
@@ -34,6 +36,7 @@ const Upload = () => {
       if (res.ok) {
         console.log("Saved to SQLite!", data);
         console.log("Resume ID:", data.resumeId);
+        navigate(`/resume/${data.resumeId}`);
       } else {
         console.error("Error: " + data.error);
       }
