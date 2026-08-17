@@ -1,12 +1,10 @@
 import { Hono } from "hono";
 import { db } from "../db";
-import { cors } from "hono/cors";
 import { GoogleGenAI } from "@google/genai";
 import { PDFParse } from "pdf-parse";
-import { prepareInstructions } from "../constants";
+import { aiResponseJSONSchema, prepareInstructions } from "../constants";
 
 const app = new Hono();
-app.use("/api/*", cors());
 
 const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -28,22 +26,36 @@ app.post("/", async (c) => {
   await Bun.write(resumePath, resumeFile);
   try {
     const arrayBuffer = await resumeFile.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const pdfData = new PDFParse(buffer);
-    const resumeText = pdfData.getText();
+    const uint8Array = new Uint8Array(arrayBuffer);
+    const pdfData = new PDFParse(uint8Array);
+    const resumeTextResult = await pdfData.getText();
+    const resumeText = resumeTextResult.text;
 
-    const prompt = prepareInstructions({ jobTitle, jobDescription });
+    const prompt = prepareInstructions({
+      jobTitle,
+      jobDescription,
+      resumeText,
+    });
 
     const genAIRequest = await genAI.interactions.create({
-      model: "gemini-1.5-flash",
+      model: "gemini-3.1-flash-lite",
       input: prompt,
+      response_format: {
+        type: "text",
+        mime_type: "application/json",
+        schema: aiResponseJSONSchema,
+      },
     });
+
     const genAIFeedback = genAIRequest.output_text;
+    console.log("genAIFeedback", genAIFeedback);
 
     const cleanedFeedback = genAIFeedback
       ?.replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
+
+    console.log("cleanedFeedback", cleanedFeedback);
 
     const insert = db.prepare(`
     INSERT INTO resumes (id, companyName, jobTitle, jobDescription, resumePath, imagePath, feedback)
@@ -62,10 +74,11 @@ app.post("/", async (c) => {
 
     return c.json({
       message: "File saved and data inserted successfully!",
-      id: id,
+      id,
     });
   } catch (error) {
     console.error("Error processing the resume:", error);
+    console.log("bro wtf is happening", error);
     return c.json({ error: "Failed to analyze the resume." }, 500);
   }
 });

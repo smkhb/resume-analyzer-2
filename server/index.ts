@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import analyze from "./routes/analyze";
 import resume from "./routes/resume";
+import { cors } from "hono/cors";
 
 const app = new Hono();
+app.use("/api/*", cors());
 
 app.get("/", (c) => c.text("Hello World!"));
 

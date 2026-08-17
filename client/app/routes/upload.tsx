@@ -33,10 +33,11 @@ const Upload = () => {
         body: formData,
       });
       const data = await res.json();
+      console.log("Response from server:", data);
       if (res.ok) {
         console.log("Saved to SQLite!", data);
-        console.log("Resume ID:", data.resumeId);
-        navigate(`/resume/${data.resumeId}`);
+        console.log("Resume ID:", data.id);
+        navigate(`/resume/${data.id}`);
       } else {
         console.error("Error: " + data.error);
       }

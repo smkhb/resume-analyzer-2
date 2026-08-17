@@ -1,53 +1,52 @@
-export const AIResponseFormat = `
-      interface Feedback {
-      overallScore: number; //max 100
-      ATS: {
-        score: number; //rate based on ATS suitability
-        tips: {
-          type: "good" | "improve";
-          tip: string; //give 3-4 tips
-        }[];
-      };
-      toneAndStyle: {
-        score: number; //max 100
-        tips: {
-          type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
-      };
-      content: {
-        score: number; //max 100
-        tips: {
-          type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
-      };
-            structure: {
-        score: number; //max 100
-        tips: {
-          type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
-      };
-      skills: {
-        score: number; //max 100
-        tips: {
-          type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
-        }[]; //give 3-4 tips
-      };
-    }`;
+import z from "zod";
+
+const tipSchema = z.object({
+  type: z.enum(["good", "improve"]),
+  tip: z
+    .string()
+    .describe("A short title for the actual explanation of the tip"),
+  explanation: z.string().describe("A detailed explanation of the tip"),
+});
+
+export const aiResponseZodSchema = z.object({
+  overallScore: z.number().max(100).describe("Max score is 100"),
+  ATS: z.object({
+    score: z.number().describe("Rate based on ATS suitability"),
+    tips: z.array(
+      z.object({
+        type: z.enum(["good", "improve"]),
+        tip: z.string().describe("Give 3-4 tips"),
+      }),
+    ),
+  }),
+  toneAndStyle: z.object({
+    score: z.number().max(100),
+    tips: z.array(tipSchema),
+  }),
+  content: z.object({
+    score: z.number().max(100),
+    tips: z.array(tipSchema),
+  }),
+  structure: z.object({
+    score: z.number().max(100),
+    tips: z.array(tipSchema),
+  }),
+  skills: z.object({
+    score: z.number().max(100),
+    tips: z.array(tipSchema),
+  }),
+});
+
+export const aiResponseJSONSchema = z.toJSONSchema(aiResponseZodSchema);
 
 export const prepareInstructions = ({
   jobTitle,
   jobDescription,
+  resumeText,
 }: {
   jobTitle: string;
   jobDescription: string;
+  resumeText: string;
 }) =>
   `You are an expert in ATS (Applicant Tracking System) and resume analysis.
       Please analyze and rate this resume and suggest how to improve it.
@@ -58,7 +57,4 @@ export const prepareInstructions = ({
       If provided, take the job description into consideration.
       The job title is: ${jobTitle}
       The job description is: ${jobDescription}
-      Provide the feedback using the following format:
-      ${AIResponseFormat}
-      Return the analysis as an JSON object, without any other text and without the backticks.
-      Do not include any other text or comments.`;
+      The resume is: ${resumeText}`;

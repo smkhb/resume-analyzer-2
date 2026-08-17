@@ -1,9 +1,7 @@
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { db } from "../db";
 
 const app = new Hono();
-app.use("/api/*", cors());
 
 app.get("/resumes/:id", async (c) => {
   const id = c.req.param("id");
