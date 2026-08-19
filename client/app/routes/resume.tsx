@@ -26,9 +26,9 @@ interface AnalysisResult {
   overallScore: number;
   ATS: CategoryFeedback;
   toneAndStyle: CategoryFeedback;
-  content: { score: number; feedback: string; tips: string[] };
-  structure: { score: number; feedback: string; tips: string[] };
-  skills: { score: number; feedback: string; tips: string[] };
+  content: CategoryFeedback;
+  structure: CategoryFeedback;
+  skills: CategoryFeedback;
 }
 
 interface DBResume {
