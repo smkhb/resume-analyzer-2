@@ -48,14 +48,12 @@ app.post("/", async (c) => {
     });
 
     const genAIFeedback = genAIRequest.output_text;
-    console.log("genAIFeedback", genAIFeedback);
 
     const cleanedFeedback = genAIFeedback
       ?.replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    console.log("cleanedFeedback", cleanedFeedback);
 
     const insert = db.prepare(`
     INSERT INTO resumes (id, companyName, jobTitle, jobDescription, resumePath, imagePath, feedback)
@@ -78,7 +76,6 @@ app.post("/", async (c) => {
     });
   } catch (error) {
     console.error("Error processing the resume:", error);
-    console.log("bro wtf is happening", error);
     return c.json({ error: "Failed to analyze the resume." }, 500);
   }
 });

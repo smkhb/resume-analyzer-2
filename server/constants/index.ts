@@ -8,6 +8,11 @@ const tipSchema = z.object({
   explanation: z.string().describe("A detailed explanation of the tip"),
 });
 
+const categoryFeedbackSchema = z.object({
+  score: z.number().max(100),
+  tips: z.array(tipSchema),
+});
+
 export const aiResponseZodSchema = z.object({
   overallScore: z.number().max(100).describe("Max score is 100"),
   ATS: z.object({
@@ -20,20 +25,16 @@ export const aiResponseZodSchema = z.object({
     ),
   }),
   toneAndStyle: z.object({
-    score: z.number().max(100),
-    tips: z.array(tipSchema),
+    categoryFeedbackSchema,
   }),
   content: z.object({
-    score: z.number().max(100),
-    tips: z.array(tipSchema),
+    categoryFeedbackSchema,
   }),
   structure: z.object({
-    score: z.number().max(100),
-    tips: z.array(tipSchema),
+    categoryFeedbackSchema,
   }),
   skills: z.object({
-    score: z.number().max(100),
-    tips: z.array(tipSchema),
+    categoryFeedbackSchema,
   }),
 });
 

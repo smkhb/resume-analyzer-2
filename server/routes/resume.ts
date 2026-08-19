@@ -3,7 +3,7 @@ import { db } from "../db";
 
 const app = new Hono();
 
-app.get("/resumes/:id", async (c) => {
+app.get("/:id", async (c) => {
   const id = c.req.param("id");
   const query = db
     .query("SELECT * FROM resumes WHERE id = $id")

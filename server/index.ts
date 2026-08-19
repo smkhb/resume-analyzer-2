@@ -2,9 +2,11 @@ import { Hono } from "hono";
 import analyze from "./routes/analyze";
 import resume from "./routes/resume";
 import { cors } from "hono/cors";
+import { serveStatic } from "hono/bun";
 
 const app = new Hono();
-app.use("/api/*", cors());
+app.use("/*", cors());
+app.use("/uploads/*", serveStatic({ root: "./" }));
 
 app.get("/", (c) => c.text("Hello World!"));
 
