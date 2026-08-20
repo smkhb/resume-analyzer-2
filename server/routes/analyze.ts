@@ -3,6 +3,7 @@ import { db } from "../db";
 import { GoogleGenAI } from "@google/genai";
 import { PDFParse } from "pdf-parse";
 import { aiResponseJSONSchema, prepareInstructions } from "../constants";
+import { pdf } from "pdf-to-img";
 
 const app = new Hono();
 
@@ -20,10 +21,10 @@ app.post("/", async (c) => {
     return c.json({ error: "Resume file was not uploaded." }, 400);
   }
 
-  const id = crypto.randomUUID();
-  const resumePath = `./uploads/${id}-${resumeFile.name}`;
-
+  const id = crypto.randomUUID().slice(0, 8);
+  const resumePath = `./uploads/resumes/${id}-${resumeFile.name}`;
   await Bun.write(resumePath, resumeFile);
+
   try {
     const arrayBuffer = await resumeFile.arrayBuffer();
     const uint8Array = new Uint8Array(arrayBuffer);
@@ -53,7 +54,6 @@ app.post("/", async (c) => {
       ?.replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
-
 
     const insert = db.prepare(`
     INSERT INTO resumes (id, companyName, jobTitle, jobDescription, resumePath, imagePath, feedback)

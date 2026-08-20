@@ -1,5 +1,5 @@
 import { AlertTriangle, ArrowLeft, CheckCircle, FileText } from "lucide-react";
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   Accordion,
@@ -103,7 +103,7 @@ const Resume = () => {
     "./uploads/",
     "http://localhost:3333/uploads/",
   );
-  console.log("PDF URL:", pdfURL);
+  const ResumePreview = lazy(() => import("~/components/ui/resumePreview"));
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -144,11 +144,10 @@ const Resume = () => {
               Open in new tab
             </a>
           </div>
-          <iframe
-            src={pdfURL}
-            className="w-full flex-1 border-none"
-            title="Resume Preview"
-          />
+
+          <Suspense>
+            <ResumePreview pdfUrl={pdfURL} />
+          </Suspense>
         </section>
 
         {/* RIGHT COLUMN: AI Feedback (Takes up 7/12 grid columns) */}
