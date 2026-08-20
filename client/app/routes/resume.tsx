@@ -100,9 +100,10 @@ const Resume = () => {
   };
 
   const pdfURL = resume.resumePath?.replace(
-    "./upload/",
+    "./uploads/",
     "http://localhost:3333/uploads/",
   );
+  console.log("PDF URL:", pdfURL);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
