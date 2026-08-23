@@ -68,8 +68,8 @@ const Resume = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items=center justify-center bg-gray-50">
-        <p className="text-lg font-semibold animate-pulse text-gray-600">
+      <div className="min-h-screen flex items=center justify-center ">
+        <p className="text-lg font-semibold animate-pulse ">
           Loading your AI analysis...
         </p>
       </div>
@@ -78,7 +78,7 @@ const Resume = () => {
 
   if (!resume || !analysis) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-6">
+      <div className="min-h-screen flex flex-col items-center justify-center p-6">
         <p className="text-xl font-bold text-red-500 mb-4">
           Analysis not found!
         </p>
@@ -106,23 +106,16 @@ const Resume = () => {
   const ResumePreview = lazy(() => import("~/components/ui/resumePreview"));
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen  flex flex-col">
       {/* Top Header Bar */}
-      <header className="bg-white border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+      <header className=" border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
         <div className="flex items-center gap-4">
-          <Link
-            to="/"
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-          >
-            <ArrowLeft size={20} className="text-gray-600" />
+          <Link to="/" className="p-2 hover: rounded-full transition-colors">
+            <ArrowLeft size={20} />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-gray-900">
-              Job Title: {resume.jobTitle}
-            </h1>
-            <p className="text-sm text-gray-500">
-              Applied to: {resume.companyName}
-            </p>
+            <h1 className="text-xl font-bold">Job Title: {resume.jobTitle}</h1>
+            <p className="text-sm ">Applied to: {resume.companyName}</p>
           </div>
         </div>
       </header>
@@ -130,23 +123,23 @@ const Resume = () => {
       {/* Main Split-Screen Layout */}
       <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-[1600px] w-full mx-auto">
         {/* LEFT COLUMN: PDF View (Takes up 5/12 grid columns) */}
-        <section className="lg:col-span-5 bg-white rounded-2xl shadow-md border h-[calc(100vh-140px)] flex flex-col overflow-hidden">
-          <div className="bg-gray-100 px-4 py-3 border-b flex items-center justify-between">
-            <span className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+        <section className="lg:col-span-5 rounded-2xl shadow-md border flex flex-col overflow-hidden">
+          <div className=" px-4 py-3 border-b flex items-center justify-between">
+            <span className="text-sm font-semibold flex items-center gap-2">
               <FileText size={16} /> Original Resume
             </span>
             <a
               href={pdfURL}
               target="_blank"
               rel="noreferrer"
-              className="text-xs text-blue-600 hover:underline font-medium"
+              className="text-xs hover:underline font-medium"
             >
               Open in new tab
             </a>
           </div>
 
-          <Suspense>
-            <ResumePreview pdfUrl={pdfURL} />
+          <Suspense >
+            <ResumePreview pdfUrl={pdfURL}  />
           </Suspense>
         </section>
 
@@ -157,7 +150,7 @@ const Resume = () => {
             {/* Overall Score Circle */}
             <Card className="shadow-md">
               <CardHeader className="pb-2">
-                <CardTitle className="text-md font-semibold text-gray-600">
+                <CardTitle className="text-md font-semibold ">
                   Overall Matching
                 </CardTitle>
               </CardHeader>
@@ -193,7 +186,7 @@ const Resume = () => {
                       strokeLinecap="round"
                     />
                   </svg>
-                  <span className="absolute text-3xl font-extrabold text-gray-900">
+                  <span className="absolute text-3xl font-extrabold ">
                     {analysis.overallScore}%
                   </span>
                 </div>
@@ -203,13 +196,13 @@ const Resume = () => {
             {/* ATS Score Card */}
             <Card className="shadow-md flex flex-col justify-between">
               <CardHeader className="pb-2">
-                <CardTitle className="text-md font-semibold text-gray-600">
+                <CardTitle className="text-md font-semibold ">
                   ATS Score
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-center gap-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-4xl font-extrabold text-gray-900">
+                  <span className="text-4xl font-extrabold ">
                     {analysis.ATS.score}%
                   </span>
                   <Badge
@@ -223,9 +216,7 @@ const Resume = () => {
                   </Badge>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">
-                    ATS Optimization Bar
-                  </p>
+                  <p className="text-xs  mb-1">ATS Optimization Bar</p>
                   <Progress value={analysis.ATS.score} className="h-2" />
                 </div>
               </CardContent>
@@ -234,8 +225,8 @@ const Resume = () => {
 
           {/* ATS Improvement Tips List */}
           <Card className="shadow-md">
-            <CardHeader className="border-b bg-gray-50/50 py-4">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-b /50 py-4">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 ">
                 <CheckCircle size={20} className="text-green-500" /> ATS
                 Optimization Tips
               </CardTitle>
@@ -245,7 +236,7 @@ const Resume = () => {
                 {analysis.ATS.tips.map((tip, index) => (
                   <li
                     key={index}
-                    className="flex gap-3 text-sm text-gray-600 leading-relaxed"
+                    className="flex gap-3 text-sm  leading-relaxed"
                   >
                     <span className="text-green-500 font-bold">•</span>
                     tip here:
@@ -257,8 +248,8 @@ const Resume = () => {
 
           {/* Detailed Category Accordions */}
           <Card className="shadow-md">
-            <CardHeader className="border-b bg-gray-50/50 py-4">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 text-gray-800">
+            <CardHeader className="border-b /50 py-4">
+              <CardTitle className="text-lg font-bold flex items-center gap-2 ">
                 <AlertTriangle size={20} className="text-amber-500" /> Detailed
                 AI Insights
               </CardTitle>
@@ -281,9 +272,7 @@ const Resume = () => {
                   >
                     <AccordionTrigger className="hover:no-underline py-4">
                       <div className="flex items-center justify-between w-full pr-4 text-left">
-                        <span className="font-semibold text-gray-900 text-md">
-                          {label}
-                        </span>
+                        <span className="font-semibold  text-md">{label}</span>
                         <Badge
                           className={`${getScoreBadgeColor(data.score)} px-2.5 py-0.5`}
                         >
@@ -291,14 +280,12 @@ const Resume = () => {
                         </Badge>
                       </div>
                     </AccordionTrigger>
-                    <AccordionContent className="pt-2 pb-4 text-sm text-gray-600 flex flex-col gap-4 leading-relaxed">
+                    <AccordionContent className="pt-2 pb-4 text-sm  flex flex-col gap-4 leading-relaxed">
                       <div>
-                        <h4 className="font-bold text-gray-800 mb-1">Tips:</h4>
+                        <h4 className="font-bold  mb-1">Tips:</h4>
                       </div>
                       <div>
-                        <h4 className="font-bold text-gray-800 mb-2">
-                          Tips to Improve:
-                        </h4>
+                        <h4 className="font-bold  mb-2">Tips to Improve:</h4>
                         <ul className="list-disc pl-5 space-y-1"></ul>
                       </div>
                     </AccordionContent>
