@@ -35,7 +35,7 @@ const Upload = () => {
       const data = await res.json();
       console.log("Response from server:", data);
       if (res.ok) {
-        navigate(`/resume/${data.id}`);
+        navigate(`/resumes/${data.id}`);
       } else {
         console.error("Error: " + data.error);
       }

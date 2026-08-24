@@ -106,7 +106,7 @@ const Resume = () => {
   const ResumePreview = lazy(() => import("~/components/ui/resumePreview"));
 
   return (
-    <div className="min-h-screen  flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* Top Header Bar */}
       <header className=" border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
         <div className="flex items-center gap-4">
