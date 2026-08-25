@@ -1,7 +1,7 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Calendar, FileUp, Plus, Trash2 } from "lucide-react";
+import { Calendar, FileUp, Loader2, Plus, Trash2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
+import { Skeleton } from "~/components/ui/skeleton";
 const ResumePreview = lazy(() => import("~/components/ui/resumePreview"));
 
 interface ResumeListItem {
@@ -108,9 +109,20 @@ export default function Home() {
     }
   };
 
+  function PdfSkeleton() {
+    return (
+      <div className="w-112.5 aspect-[1/1.41] relative rounded-md overflow-hidden bg-muted/40 border border-dashed border-muted-foreground/20 flex items-center justify-center">
+        <Skeleton className="w-full h-full absolute inset-0" />
+        <div className="relative z-10 flex items-center justify-center">
+          <Loader2 className="h-24 w-24 animate-spin " />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b px-6 py-4 flex items-center justify-between shadow-md sticky top-0 z-50">
+      <header className="border-b px-6 py-4 flex items-center justify-between shadow-md sticky top-0 z-50 dark:bg-gray-950 min-h-20">
         <h1 className="text-xl font-bold ">Resume Analyzer</h1>
         <Link
           to="/upload"
@@ -119,13 +131,15 @@ export default function Home() {
           <FileUp size={20} />
         </Link>
       </header>
-      <main className="flex-1 gap-6 p-6 max-w-[1600px] w-full mx-auto items-center justify-center">
+      <main className="flex flex-1 gap-6 p-6 max-w-[1600px] w-full justify-center mx-auto">
         {loading ? (
-          <section className="flex items-center justify-center py-20">
-            <p className="text-lg font-semibold animate-pulse">Buscando...</p>
+          <section className="flex flex-1 items-center justify-center">
+            <div className="relative z-10 flex items-center justify-center">
+              <Loader2 className="h-24 w-24 animate-spin" />
+            </div>
           </section>
         ) : resumes.length === 0 ? (
-          <section className="flex flex-col items-center justify-center border-2 border-dashed rounded-2xl p-16 text-center max-w-xl mx-auto shadow-md">
+          <section className="flex flex-1 flex-col items-center justify-center border-2 border-dashed rounded-2xl p-16 text-center max-w-xl mx-auto shadow-md">
             <div className="p-4 rounded-full mb-6 shadow-md">
               <FileUp size={48} className="text-gray-400" />
             </div>
@@ -154,7 +168,7 @@ export default function Home() {
                   key={resume.id}
                   className="block group"
                 >
-                  <Card className="hover:shadow-lg transition-all duration-300 border overflow-hidden relative cursor-pointer">
+                  <Card className="hover:shadow-lg transition-all duration-300 border overflow-hidden relative cursor-pointer w-full max-w-md">
                     <div
                       className={`h-1.5 w-full ${score >= 80 ? "bg-green-500" : score >= 60 ? "bg-yellow-500" : "bg-red-500"}`}
                     />
@@ -174,9 +188,10 @@ export default function Home() {
                       </div>
                     </CardHeader>
                     <CardContent className="flex flex-col items-center justify-between">
-                      <Suspense>
+                      <Suspense fallback={<PdfSkeleton />}>
                         <ResumePreview pdfUrl={pdfURL} />
                       </Suspense>
+
                       <div className="w-full flex items-center justify-between mt-4">
                         <div className="flex items-center gap-2 text-xs">
                           <Calendar size={13} />

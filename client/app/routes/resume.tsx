@@ -108,7 +108,7 @@ const Resume = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Header Bar */}
-      <header className=" border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50">
+      <header className=" border-b px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-50 dark:bg-gray-950 min-h-20">
         <div className="flex items-center gap-4">
           <Link to="/" className="p-2 hover: rounded-full transition-colors">
             <ArrowLeft size={20} />
@@ -138,8 +138,8 @@ const Resume = () => {
             </a>
           </div>
 
-          <Suspense >
-            <ResumePreview pdfUrl={pdfURL}  />
+          <Suspense>
+            <ResumePreview pdfUrl={pdfURL} />
           </Suspense>
         </section>
 
