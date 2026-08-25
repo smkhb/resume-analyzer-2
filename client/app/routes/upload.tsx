@@ -54,11 +54,11 @@ const Upload = () => {
           <Link to="/" className="p-2 hover: rounded-full transition-colors">
             <ArrowLeft size={20} />
           </Link>
-          <h1 className="text-xl font-bold ">Resume Analyzer</h1>
+          <h1 className="text-xl font-bold">Resume Analyzer</h1>
         </div>
       </header>
-      <main className="min-h-screen flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-xl  rounded-2xl shadow-md p-8 border">
+      <main className="min-h-screen flex flex-col items-center  p-6">
+        <div className="w-full max-w-xl rounded-2xl shadow-md p-8 border">
           <h1 className="text-3xl font-bold mb-2 text-center">
             Resume Analyzer
           </h1>
