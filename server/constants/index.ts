@@ -15,27 +15,11 @@ const categoryFeedbackSchema = z.object({
 
 export const aiResponseZodSchema = z.object({
   overallScore: z.number().max(100).describe("Max score is 100"),
-  ATS: z.object({
-    score: z.number().describe("Rate based on ATS suitability"),
-    tips: z.array(
-      z.object({
-        type: z.enum(["good", "improve"]),
-        tip: z.string().describe("Give 3-4 tips"),
-      }),
-    ),
-  }),
-  toneAndStyle: z.object({
-    categoryFeedbackSchema,
-  }),
-  content: z.object({
-    categoryFeedbackSchema,
-  }),
-  structure: z.object({
-    categoryFeedbackSchema,
-  }),
-  skills: z.object({
-    categoryFeedbackSchema,
-  }),
+  ATS: categoryFeedbackSchema,
+  toneAndStyle: categoryFeedbackSchema,
+  content: categoryFeedbackSchema,
+  structure: categoryFeedbackSchema,
+  skills: categoryFeedbackSchema,
 });
 
 export const aiResponseJSONSchema = z.toJSONSchema(aiResponseZodSchema);

@@ -3,7 +3,6 @@ import { db } from "../db";
 import { GoogleGenAI } from "@google/genai";
 import { PDFParse } from "pdf-parse";
 import { aiResponseJSONSchema, prepareInstructions } from "../constants";
-import { pdf } from "pdf-to-img";
 
 const app = new Hono();
 

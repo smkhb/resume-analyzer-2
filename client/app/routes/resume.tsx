@@ -1,4 +1,11 @@
-import { AlertTriangle, ArrowLeft, CheckCircle, FileText } from "lucide-react";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle,
+  FileText,
+  Loader2,
+  TriangleAlert,
+} from "lucide-react";
 import { lazy, Suspense, useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
@@ -10,6 +17,7 @@ import {
 import { Badge } from "~/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { Progress } from "~/components/ui/progress";
+import { Skeleton } from "~/components/ui/skeleton";
 
 interface TipItem {
   type: "good" | "improve";
@@ -52,10 +60,10 @@ const Resume = () => {
       try {
         const res = await fetch(`http://localhost:3333/api/resumes/${id}`);
         const data = await res.json();
-        console.log("Fetched resume data:", data);
         if (res.ok) {
           setResume(data);
           setAnalysis(JSON.parse(data.feedback));
+          console.log("Fetched analysis:", JSON.parse(data.feedback));
         }
       } catch (err) {
         console.error("Error fetching analysis:", err);
@@ -105,6 +113,17 @@ const Resume = () => {
   );
   const ResumePreview = lazy(() => import("~/components/ui/resumePreview"));
 
+  function PdfSkeleton() {
+    return (
+      <div className="w-112.5 aspect-[1/1.41] relative rounded-md overflow-hidden bg-muted/40 border border-dashed border-muted-foreground/20 flex items-center justify-center">
+        <Skeleton className="w-full h-full absolute inset-0" />
+        <div className="relative z-10 flex items-center justify-center">
+          <Loader2 className="h-24 w-24 animate-spin " />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Header Bar */}
@@ -138,75 +157,147 @@ const Resume = () => {
             </a>
           </div>
 
-          <Suspense>
+          <Suspense fallback={<PdfSkeleton />}>
             <ResumePreview pdfUrl={pdfURL} />
           </Suspense>
         </section>
 
         {/* RIGHT COLUMN: AI Feedback (Takes up 7/12 grid columns) */}
-        <section className="lg:col-span-7 flex flex-col gap-6 overflow-y-auto max-h-[calc(100vh-140px)] pr-2">
+        <section className="lg:col-span-7 flex flex-col gap-6 pr-2">
           {/* Overall & ATS Score Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Overall Score Circle */}
             <Card className="shadow-md">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-md font-semibold ">
-                  Overall Matching
+              <CardHeader className="border-b">
+                <CardTitle className="text-lg font-semibold ">
+                  Resume Review
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col items-center justify-center py-6">
-                <div className="relative flex items-center justify-center">
-                  {/* Premium circular SVG indicator */}
-                  <svg className="w-32 h-32 transform -rotate-90">
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke="#f3f4f6"
-                      strokeWidth="10"
-                      fill="transparent"
-                    />
-                    <circle
-                      cx="64"
-                      cy="64"
-                      r="56"
-                      stroke={
-                        analysis.overallScore >= 80
-                          ? "#10b981"
-                          : analysis.overallScore >= 50
-                            ? "#f59e0b"
-                            : "#ef4444"
-                      }
-                      strokeWidth="10"
-                      fill="transparent"
-                      strokeDasharray={351.8}
-                      strokeDashoffset={
-                        351.8 - (351.8 * analysis.overallScore) / 100
-                      }
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute text-3xl font-extrabold ">
-                    {analysis.overallScore}%
-                  </span>
+              <CardContent className="flex-1 flex flex-col justify-center gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center">
+                    {/* Premium circular SVG indicator */}
+                    <svg className="w-32 h-32 transform -rotate-90">
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke="#f3f4f6"
+                        strokeWidth="10"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="64"
+                        cy="64"
+                        r="56"
+                        stroke={
+                          analysis.overallScore >= 80
+                            ? "#10b981"
+                            : analysis.overallScore >= 50
+                              ? "#f59e0b"
+                              : "#ef4444"
+                        }
+                        strokeWidth="10"
+                        fill="transparent"
+                        strokeDasharray={351.8}
+                        strokeDashoffset={
+                          351.8 - (351.8 * analysis.overallScore) / 100
+                        }
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <span className="absolute text-3xl font-extrabold">
+                      {analysis.overallScore}%
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-center ">
+                    {/* Score description */}
+                    <div className="flex flex-col gap-1">
+                      <h2 className="text-xl font-bold">Your Resume Score</h2>
+                      <span>
+                        This score is calculated based on the variables listed
+                        below.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <p className="font-semibold mb-1">Tone & Style</p>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.toneAndStyle.score)} px-3 py-1`}
+                    >
+                      {analysis.ATS.score >= 80
+                        ? "Optimized"
+                        : analysis.ATS.score >= 50
+                          ? "Average"
+                          : "Needs Review"}
+                    </Badge>
+                  </div>
+                  <span>{analysis.toneAndStyle.score}/100</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <p className="font-semibold mb-1">Structure</p>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.structure.score)} px-3 py-1`}
+                    >
+                      {analysis.ATS.score >= 80
+                        ? "Optimized"
+                        : analysis.ATS.score >= 50
+                          ? "Average"
+                          : "Needs Review"}
+                    </Badge>
+                  </div>
+                  <span>{analysis.structure.score}/100</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <p className="font-semibold mb-1">Content</p>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.content.score)} px-3 py-1`}
+                    >
+                      {analysis.ATS.score >= 80
+                        ? "Optimized"
+                        : analysis.ATS.score >= 50
+                          ? "Average"
+                          : "Needs Review"}
+                    </Badge>
+                  </div>
+                  <span>{analysis.content.score}/100</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    <p className="font-semibold mb-1">Skills</p>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.skills.score)} px-3 py-1`}
+                    >
+                      {analysis.ATS.score >= 80
+                        ? "Optimized"
+                        : analysis.ATS.score >= 50
+                          ? "Average"
+                          : "Needs Review"}
+                    </Badge>
+                  </div>
+                  <span>{analysis.skills.score}/100</span>
                 </div>
               </CardContent>
             </Card>
 
             {/* ATS Score Card */}
-            <Card className="shadow-md flex flex-col justify-between">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-md font-semibold ">
+            <Card className="shadow-md">
+              <CardHeader className="border-b">
+                <CardTitle className="text-lg font-semibold ">
                   ATS Score
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-center gap-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-4xl font-extrabold ">
-                    {analysis.ATS.score}%
+                  <span className="text-2xl font-extrabold ">
+                    {analysis.ATS.score}/100
                   </span>
                   <Badge
-                    className={`${getScoreBadgeColor(analysis.ATS.score)} text-sm font-semibold px-3 py-1`}
+                    className={`${getScoreBadgeColor(analysis.ATS.score)} text-sm px-3 py-1`}
                   >
                     {analysis.ATS.score >= 80
                       ? "Optimized"
@@ -215,85 +306,105 @@ const Resume = () => {
                         : "Needs Review"}
                   </Badge>
                 </div>
-                <div>
-                  <p className="text-xs  mb-1">ATS Optimization Bar</p>
-                  <Progress value={analysis.ATS.score} className="h-2" />
+                <div className="flex flex-col">
+                  <span className="font-semibold mb-1">
+                    How well does your resume pass through Applicant Tracking
+                    Systems (ATS)?
+                  </span>
+                  <p>
+                    Your resume was scanned like an employer would. Here's how
+                    it performed:
+                  </p>
+                  <ul className="flex flex-col gap-2 list-disc list-inside mt-2">
+                    {analysis.ATS.tips.map((tip, index) => (
+                      <li key={index} className="flex flex-col leading-relaxed">
+                        <span className="font-semibold">{tip.tip}</span>
+                        {tip.explanation}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          {/* ATS Improvement Tips List */}
-          <Card className="shadow-md">
-            <CardHeader className="border-b /50 py-4">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 ">
-                <CheckCircle size={20} className="text-green-500" /> ATS
-                Optimization Tips
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <ul className="space-y-3">
-                {analysis.ATS.tips.map((tip, index) => (
-                  <li
-                    key={index}
-                    className="flex gap-3 text-sm  leading-relaxed"
-                  >
-                    <span className="text-green-500 font-bold">•</span>
-                    tip here:
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+            {/* Content  Tips List */}
+            <Accordion type="multiple">
+              <AccordionItem
+                value="content-tips"
+                className="border-b last:botder-b-0"
+              >
+                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+                  <div className="flex items-center gap-4 w-full">
+                    <span>Content</span>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.content.score)} text-sm px-3 py-1`}
+                    >
+                      {analysis.content.score}/100
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
 
-          {/* Detailed Category Accordions */}
-          <Card className="shadow-md">
-            <CardHeader className="border-b /50 py-4">
-              <CardTitle className="text-lg font-bold flex items-center gap-2 ">
-                <AlertTriangle size={20} className="text-amber-500" /> Detailed
-                AI Insights
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <Accordion type="single" collapsible className="w-full">
-                {/* Accordion Item Template function to avoid repetition */}
-                {(
-                  [
-                    ["tone", "Tone & Style", analysis.toneAndStyle],
-                    ["content", "Content Quality", analysis.content],
-                    ["structure", "Structure & Formatting", analysis.structure],
-                    ["skills", "Skills Optimization", analysis.skills],
-                  ] as const
-                ).map(([key, label, data]) => (
-                  <AccordionItem
-                    value={key}
-                    key={key}
-                    className="border-b last:border-b-0 py-2"
-                  >
-                    <AccordionTrigger className="hover:no-underline py-4">
-                      <div className="flex items-center justify-between w-full pr-4 text-left">
-                        <span className="font-semibold  text-md">{label}</span>
-                        <Badge
-                          className={`${getScoreBadgeColor(data.score)} px-2.5 py-0.5`}
+                <AccordionContent>
+                  <div className="flex flex-col gap-4 pb-6 e pt-2">
+                    <ul className="flex flex-wrap items-center justify-between gap-3 p-4 bg-muted/50 rounded-lg border">
+                      {analysis.content.tips.map((tip, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center leading-relaxed gap-2"
                         >
-                          {data.score}/100
-                        </Badge>
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="pt-2 pb-4 text-sm  flex flex-col gap-4 leading-relaxed">
-                      <div>
-                        <h4 className="font-bold  mb-1">Tips:</h4>
-                      </div>
-                      <div>
-                        <h4 className="font-bold  mb-2">Tips to Improve:</h4>
-                        <ul className="list-disc pl-5 space-y-1"></ul>
-                      </div>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
+                          {tip.type === "good" ? (
+                            <CheckCircle className="text-green-500 shrink-0" />
+                          ) : (
+                            <TriangleAlert className="text-yellow-500 shrink-0" />
+                          )}
+                          <span className="font-medium text-foreground">
+                            {tip.tip}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {analysis.content.tips.map((tip, index) => {
+                      const isGoodTip = tip.type === "good";
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-start gap-3 rounded-lg border p-4 shadow-sm transition-colors ${
+                            isGoodTip
+                              ? "border-green-500/30 bg-green-500/10 text-foreground"
+                              : "border-yellow-500/30 bg-yellow-500/10 text-foreground"
+                          } `}
+                        >
+                          <div className="shrink-0">
+                            {isGoodTip ? (
+                              <CheckCircle className="text-green-500" />
+                            ) : (
+                              <TriangleAlert className="text-yellow-500" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 leading-relaxed">
+                            <span
+                              className={`font-semibold ${
+                                isGoodTip
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-yellow-600 dark:text-yellow-400"
+                              }`}
+                            >
+                              {tip.tip}
+                            </span>
+                            {tip.explanation && (
+                              <p className="text-muted-foreground">
+                                {tip.explanation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </section>
       </div>
     </div>
