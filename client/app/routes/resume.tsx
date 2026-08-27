@@ -345,7 +345,7 @@ const Resume = () => {
                 </AccordionTrigger>
 
                 <AccordionContent>
-                  <div className="flex flex-col gap-4 pb-6 e pt-2">
+                  <div className="flex flex-col gap-4 pb-6 pt-2">
                     <ul className="flex flex-wrap items-center justify-between gap-3 p-4 bg-muted/50 rounded-lg border">
                       {analysis.content.tips.map((tip, index) => (
                         <li
