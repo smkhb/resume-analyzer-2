@@ -327,7 +327,7 @@ const Resume = () => {
               </CardContent>
             </Card>
 
-            {/* Content  Tips List */}
+            {/* Content Tips List */}
             <Accordion type="multiple">
               <AccordionItem
                 value="content-tips"
@@ -343,7 +343,6 @@ const Resume = () => {
                     </Badge>
                   </div>
                 </AccordionTrigger>
-
                 <AccordionContent>
                   <div className="flex flex-col gap-4 pb-6 pt-2">
                     <ul className="flex flex-wrap items-center justify-between gap-3 p-4 bg-muted/50 rounded-lg border">
@@ -364,6 +363,160 @@ const Resume = () => {
                       ))}
                     </ul>
                     {analysis.content.tips.map((tip, index) => {
+                      const isGoodTip = tip.type === "good";
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-start gap-3 rounded-lg border p-4 shadow-sm transition-colors ${
+                            isGoodTip
+                              ? "border-green-500/30 bg-green-500/10 text-foreground"
+                              : "border-yellow-500/30 bg-yellow-500/10 text-foreground"
+                          } `}
+                        >
+                          <div className="shrink-0">
+                            {isGoodTip ? (
+                              <CheckCircle className="text-green-500" />
+                            ) : (
+                              <TriangleAlert className="text-yellow-500" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 leading-relaxed">
+                            <span
+                              className={`font-semibold ${
+                                isGoodTip
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-yellow-600 dark:text-yellow-400"
+                              }`}
+                            >
+                              {tip.tip}
+                            </span>
+                            {tip.explanation && (
+                              <p className="text-muted-foreground">
+                                {tip.explanation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Skills Tips List */}
+            <Accordion type="multiple">
+              <AccordionItem
+                value="content-tips"
+                className="border-b last:botder-b-0"
+              >
+                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+                  <div className="flex items-center gap-4 w-full">
+                    <span>Skills</span>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.skills.score)} text-sm px-3 py-1`}
+                    >
+                      {analysis.skills.score}/100
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex flex-col gap-4 pb-6 pt-2">
+                    <ul className="flex flex-wrap items-center justify-between gap-3 p-4 bg-muted/50 rounded-lg border">
+                      {analysis.skills.tips.map((tip, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center leading-relaxed gap-2"
+                        >
+                          {tip.type === "good" ? (
+                            <CheckCircle className="text-green-500 shrink-0" />
+                          ) : (
+                            <TriangleAlert className="text-yellow-500 shrink-0" />
+                          )}
+                          <span className="font-medium text-foreground">
+                            {tip.tip}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {analysis.skills.tips.map((tip, index) => {
+                      const isGoodTip = tip.type === "good";
+                      return (
+                        <div
+                          key={index}
+                          className={`flex items-start gap-3 rounded-lg border p-4 shadow-sm transition-colors ${
+                            isGoodTip
+                              ? "border-green-500/30 bg-green-500/10 text-foreground"
+                              : "border-yellow-500/30 bg-yellow-500/10 text-foreground"
+                          } `}
+                        >
+                          <div className="shrink-0">
+                            {isGoodTip ? (
+                              <CheckCircle className="text-green-500" />
+                            ) : (
+                              <TriangleAlert className="text-yellow-500" />
+                            )}
+                          </div>
+                          <div className="flex flex-col gap-1 leading-relaxed">
+                            <span
+                              className={`font-semibold ${
+                                isGoodTip
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-yellow-600 dark:text-yellow-400"
+                              }`}
+                            >
+                              {tip.tip}
+                            </span>
+                            {tip.explanation && (
+                              <p className="text-muted-foreground">
+                                {tip.explanation}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Tone & Style Tips List */}
+            <Accordion type="multiple">
+              <AccordionItem
+                value="content-tips"
+                className="border-b last:botder-b-0"
+              >
+                <AccordionTrigger className="text-lg font-semibold hover:no-underline">
+                  <div className="flex items-center gap-4 w-full">
+                    <span>Tone & Style</span>
+                    <Badge
+                      className={`${getScoreBadgeColor(analysis.toneAndStyle.score)} text-sm px-3 py-1`}
+                    >
+                      {analysis.toneAndStyle.score}/100
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="flex flex-col gap-4 pb-6 pt-2">
+                    <ul className="flex flex-wrap items-center justify-between gap-3 p-4 bg-muted/50 rounded-lg border">
+                      {analysis.toneAndStyle.tips.map((tip, index) => (
+                        <li
+                          key={index}
+                          className="flex items-center leading-relaxed gap-2"
+                        >
+                          {tip.type === "good" ? (
+                            <CheckCircle className="text-green-500 shrink-0" />
+                          ) : (
+                            <TriangleAlert className="text-yellow-500 shrink-0" />
+                          )}
+                          <span className="font-medium text-foreground">
+                            {tip.tip}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                    {analysis.toneAndStyle.tips.map((tip, index) => {
                       const isGoodTip = tip.type === "good";
                       return (
                         <div
