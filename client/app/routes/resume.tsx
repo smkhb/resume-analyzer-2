@@ -1,5 +1,4 @@
 import {
-  AlertTriangle,
   ArrowLeft,
   CheckCircle,
   FileText,
@@ -15,14 +14,8 @@ import {
   AccordionTrigger,
 } from "~/components/ui/accordion";
 import { Badge } from "~/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Progress } from "~/components/ui/progress";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Checkbox } from "~/components/ui/checkbox";
 import { Skeleton } from "~/components/ui/skeleton";
 
 interface TipItem {
@@ -136,6 +129,30 @@ const Resume = () => {
     );
   }
 
+  const getImprovementTips = () => {
+    const atsTips = analysis.ATS.tips.filter((tip) => tip.type === "improve");
+    const toneAndStyleTips = analysis.toneAndStyle.tips.filter(
+      (tip) => tip.type === "improve",
+    );
+    const structureTips = analysis.structure.tips.filter(
+      (tip) => tip.type === "improve",
+    );
+    const contentTips = analysis.content.tips.filter(
+      (tip) => tip.type === "improve",
+    );
+    const skillsTips = analysis.skills.tips.filter(
+      (tip) => tip.type === "improve",
+    );
+
+    return {
+      atsTips,
+      toneAndStyleTips,
+      structureTips,
+      contentTips,
+      skillsTips,
+    };
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Header Bar */}
@@ -152,7 +169,7 @@ const Resume = () => {
       </header>
 
       {/* Main Split-Screen Layout */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 max-w-[1600px] w-full mx-auto">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 p-6 w-full mx-auto">
         {/* LEFT COLUMN: PDF View (Takes up 5/12 grid columns) */}
         <section className="lg:col-span-5 rounded-2xl shadow-md border flex flex-col overflow-hidden">
           <div className=" px-4 py-3 border-b flex items-center justify-between">
@@ -345,7 +362,6 @@ const Resume = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="flex-1 flex flex-col justify-center gap-4">
-
                 {/* Tone & Style Tips List */}
                 <Accordion type="multiple">
                   <AccordionItem
@@ -656,6 +672,37 @@ const Resume = () => {
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
+              </CardContent>
+            </Card>
+
+            {/* Resume Improvement Checklist */}
+            <Card className="shadow-md">
+              <CardHeader className="border-b">
+                <CardTitle className="text-lg font-semibold ">
+                  Resume Improvement Checklist
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex flex-col justify-center gap-4">
+                <div className="flex flex-col">
+                  <ul className="flex flex-col items-start gap-4">
+                    {(
+                      [
+                        ...getImprovementTips().atsTips,
+                        ...getImprovementTips().toneAndStyleTips,
+                        ...getImprovementTips().structureTips,
+                        ...getImprovementTips().contentTips,
+                        ...getImprovementTips().skillsTips,
+                      ] as TipItem[]
+                    ).map((tip, index) => (
+                      <li key={index} className="flex leading-relaxed gap-2">
+                        <div className="flex flex-row items-center gap-3 leading-relaxed">
+                          <Checkbox />
+                          {tip.tip}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </CardContent>
             </Card>
           </div>
